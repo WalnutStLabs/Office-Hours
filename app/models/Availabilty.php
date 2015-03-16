@@ -46,6 +46,9 @@ class Availability extends \Eloquent {
 				case ('evolve'):
 					$data[2] = Location::where('name', 'Evolve IP')->first()->id;
 					break;
+				case ('nextfab'):
+					$data[2] = Location::where('name', 'NextFab')->first()->id;
+					break;
 				case ('remote'):
 					$data[2] = Location::where('name', 'Remote')->first()->id;
 					break;
@@ -59,9 +62,32 @@ class Availability extends \Eloquent {
 
 	}
 
-	public function createRecurringAvailability()
+	// idgaf
+	public static function createRecurringAvailability($hour, $day_id, $advisor_id, $service_id, $location_id)
 	{
-		// to do...
+		$times = [];
+
+		if ($hour > 11) {
+			if ($hour > 12) {
+				$hour = (int) $hour - 12;
+				$times = [(string) $hour.' PM', (string) $hour.':30 PM'];
+			} else {
+				$times = [(string) $hour.' PM', (string) $hour.':30 PM'];
+			}
+		} else {
+			$times = [(string) $hour.' AM', (string) $hour.':30 AM'];
+		}
+
+		foreach ($times as $time) {
+			$availability = new Availability;
+			$availability->save();
+
+			$availability->locations()->attach($location_id);
+			$availability->advisors()->attach($advisor_id);
+			$availability->services()->attach($service_id);
+			$availability->days()->attach($day_id, ['time' => $time]);
+		}
+
 	}
 
 	/**
@@ -130,13 +156,15 @@ class Availability extends \Eloquent {
 			$time = $availability->days()->first()->pivot->time;
 			$date = $availability->days()->first()['date'];
 			$dt = Carbon::parse($date.' '.$availability->timeToTimeStamp($time));
+
 			if (Carbon::now()->diffInMinutes($dt, false) < 0) {
 				$expiredAvailabilities[] = $availability;
 			}
 		}
 
 		foreach ($expiredAvailabilities as $expAvail) {
-			$expAvail->delete();
+			$expAvail->expired = 1;
+			$expAvail->save();
 		}
 
 	}
@@ -192,6 +220,54 @@ class Availability extends \Eloquent {
 				return '22:00';
 			case '11 PM':
 				return '23:00';
+			case '12:30 AM':
+				return '00:30';
+			case '1:30 AM':
+				return '01:30';
+			case '2:30 AM':
+				return '02:30';
+			case '3:30 AM':
+				return '03:30';
+			case '4:30 AM':
+				return '04:30';
+			case '5:30 AM':
+				return '05:30';
+			case '6:30 AM':
+				return '06:30';
+			case '7:30 AM':
+				return '07:30';
+			case '8:30 AM':
+				return '08:30';
+			case '9:30 AM':
+				return '09:30';
+			case '10:30 AM':
+				return '10:30';
+			case '11:30 AM':
+				return '11:30';
+			case '12:30 PM':
+				return '12:30';
+			case '1:30 PM':
+				return '13:30';
+			case '2:30 PM':
+				return '14:30';
+			case '3:30 PM':
+				return '15:30';
+			case '4:30 PM':
+				return '16:30';
+			case '5:30 PM':
+				return '17:30';
+			case '6:30 PM':
+				return '18:30';
+			case '7:30 PM':
+				return '19:30';
+			case '8:30 PM':
+				return '20:30';
+			case '9:30 PM':
+				return '21:30';
+			case '10:30 PM':
+				return '22:30';
+			case '11:30 PM':
+				return '23:30';
 		}
 	}
 

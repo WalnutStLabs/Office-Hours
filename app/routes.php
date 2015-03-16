@@ -1,14 +1,23 @@
 <?php
 
-use \MyApp\Day;
-use Carbon\Carbon;
 
-// dd($app);
+// recurring availabilities
+Route::delete('recurring-availabilities/{id}', [
+	'as' => 'user.recurring-availabilities.destroy',
+	'uses' => 'App\Controllers\User\UserAvailabilityController@destroyRecur'
+]);
 
 Route::get('/', [
 	'as'   => 'home',
 	'uses' => 'PagesController@home'
 ]);
+
+Route::get('/admin', [
+	'as'   => 'admin.index',
+	'uses' => 'App\Controllers\Admin\DashboardController@index',
+	'before' => 'admin'
+]);
+
 
 // Update an existing Advisor
 Route::get('advisors/edit/{id}', [
@@ -112,6 +121,11 @@ Route::get('expertise-groups/{id}/advisors', [
 	'uses' => 'App\Controllers\Api\ExpertiseGroupAPIController@getAdvisorsInGroup'
 ]);
 
+Route::group(['prefix' => 'api'], function() {
+	Route::get('expertise-groups', 'App\Controllers\Api\ExpertiseGroupAPIController@getGroupsJson');
+	Route::get('expertise-groups/{id}/advisors', 'App\Controllers\Api\ExpertiseGroupAPIController@getAdvisorsOfGroupJson');
+	Route::get('expertise-groups/{id}/advisors/active', 'App\Controllers\Api\ExpertiseGroupAPIController@getActiveAdvisorsOfGroupJson');
+});
 //=============================================================================
 // USER EXPERIENCE
 //=============================================================================
@@ -210,6 +224,17 @@ Route::get('expertise-groups/{id}/advisors', [
 		Route::post('availabilities/destroy', [
 			'as'   => 'user.availabilities.destroy',
 			'uses' => 'App\Controllers\User\UserAvailabilityController@destroy'
+		]);
+
+		// recurring availabilities
+		Route::post('recurring-availabilities/create', [
+			'as' => 'user.recurring-availabilities.store',
+			'uses' => 'App\Controllers\User\UserAvailabilityController@storeRecur'
+		]);
+
+		Route::get('recurring-availabilities/destroy/{id}', [
+			'as' => 'user.recurring-availabilities.destroy',
+			'uses' => 'App\Controllers\User\UserAvailabilityController@destroyRecur'
 		]);
 	});
 
@@ -465,9 +490,9 @@ Route::group(['prefix' => 'locations', 'before'=>'admin'], function() {
 //=============================================================================
 
 Route::get('availabilities', [
-	'as'   => 'availabilities.index',
-	'before'=>'admin',
-	'uses' => 'AvailabilityController@index'
+	'as'     => 'availabilities.index',
+	'before' =>'admin',
+	'uses'   => 'App\Controllers\Admin\ActivityController@seeBookedAvailabilities'
 ]);
 
 //=============================================================================

@@ -40,7 +40,9 @@ class ExpertiseGroupAPIController extends \BaseController {
 			]));
 		}
 
-		$advisors = $expertiseGroup->getAdvisorsWhoHaveAnAvailabilityWithinGroup();
+		// $advisors = $expertiseGroup->getAdvisorsWhoHaveAnAvailabilityWithinGroup();
+
+		$advisors = $expertiseGroup->getAdvisorsWhoHaveAnExpertiseWithinGroup('randomize');
 
 		if ($advisors == false) {
 			$advisors = '<h2>There are currently no advisors with an availability.</h2>';
@@ -53,6 +55,39 @@ class ExpertiseGroupAPIController extends \BaseController {
 		return View::make('api.advisors.with-expertise-group', compact([
 			'advisors'
 		]));
+	}
+
+	public function getGroupsJson()
+	{
+		return ExpertiseGroup::all()->toJson();
+	}
+
+	public function getAdvisorsOfGroupJson($expGroupId)
+	{
+		$group = ExpertiseGroup::find($expGroupId);
+
+		$advisors = $group->getAdvisorsWhoHaveAnExpertiseWithinGroup();
+
+		foreach($advisors as $advisor) {
+			$advisor->toJson();
+		}
+
+		return $advisors;
+	}
+
+	public function getActiveAdvisorsOfGroupJson($expGroupId)
+	{
+		$group = ExpertiseGroup::find($expGroupId);
+
+		$advisors = $group->getAdvisorsAndAvailWhoHaveAnAvailabilityWithinGroup();
+
+		foreach($advisors as $advisor) {
+			foreach($advisor as $jaun) {
+				$jaun->toJson();
+			}
+		}
+
+		return $advisors;
 	}
 
 }

@@ -1,11 +1,15 @@
 @foreach ($advisors as $advisor)
 	<div class="row col-sm-8 col-sm-offset-2 advisor-listing">
 			<div class="row advisor-header">
-				<img src="{{ $advisor->profile_img }}" class="img-responsive">
-				@if($advisor->linkedin)
-					<a href="{{ $advisor->linkedin }}"><i class="fa fa-linkedin-square"></i></a>
+				@if($advisor->profile_img)
+					<img src="{{ $advisor->profile_img }}" class="img-responsive">
 				@endif
-{{ link_to_route('advisors.show', $advisor->first_name.' '.$advisor->last_name, [$advisor->id, $advisor->first_name, $advisor->last_name]) }}				@foreach ($advisor->expertise()->get() as $exp)
+				@if($advisor->linkedin)
+					<a href="{{ $advisor->linkedin }}" target="_blank"><i class="fa fa-linkedin-square"></i></a>
+				@endif
+				{{ link_to_route('advisors.show', $advisor->first_name.' '.$advisor->last_name, [$advisor->id, $advisor->first_name, $advisor->last_name], ['class' => 'advisor-name']) }}
+				<br />
+				@foreach ($advisor->expertise()->get() as $exp)
 					<button class="btn">{{$exp->title}}</button>
 				@endforeach
 				<p>{{nl2br($advisor->bio)}}</p>
@@ -14,7 +18,7 @@
 			<div class="row advisor-availability-listings">
 				<h4 class="the-word-availabilities">Availabilities:</h4>
 				<div class="row container-fix-avail">
-				@foreach ($advisor->availabilities()->where('is_booked', '!==', '1')->get()->sortBy(function($availZ) {
+				@foreach ($advisor->availabilities()->where('is_booked', '!==', '1')->where('expired', 0)->get()->sortBy(function($availZ) {
 					return $availZ->days()->first()['date'];
 				}) as $avail)
 				<a href="#" id="{{$avail->id}}" class="advisor-avail-single-a">

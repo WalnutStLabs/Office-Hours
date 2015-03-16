@@ -52,6 +52,29 @@ class AdvisorController extends \BaseController {
 	{
 		extract(Input::only('first_name', 'last_name', 'email', 'password', 'bio', 'linkedin'));
 
+		if (Input::has('image')) {
+			if (Input::file('image')->isValid()) {
+				$this->advisor->createAdvisor(
+					$first_name,
+					$last_name,
+					$email,
+					$password,
+					$bio,
+					$linkedin,
+					Input::file('image')
+				);
+			}
+		} else {
+			$this->advisor->createAdvisor(
+				$first_name,
+				$last_name,
+				$email,
+				$password,
+				$bio,
+				$linkedin
+			);
+		}
+
 		$this->advisor->createAdvisor($first_name, $last_name, $email, $password, $bio, $linkedin);
 
 		return Redirect::home();
@@ -111,10 +134,33 @@ class AdvisorController extends \BaseController {
 	public function update($id)
 	{
 		extract(Input::only('first_name', 'last_name', 'email', 'password', 'id', 'bio', 'linkedin'));
+		if (Input::file('image')) {
+			if (Input::file('image')->isValid()) {
+				$this->advisor->editAdvisor(
+					$first_name,
+					$last_name,
+					$email,
+					$password,
+					$id,
+					$bio,
+					$linkedin,
+					Input::file('image')
+				);
+			}
+		} else {
+			$this->advisor->editAdvisor(
+				$first_name,
+				$last_name,
+				$email,
+				$password,
+				$id,
+				$bio,
+				$linkedin
+			);
+		}
 
-		$this->advisor->editAdvisor($first_name, $last_name, $email, $password, $id, $bio, $linkedin);
 
-		return Redirect::home();
+		return Redirect::route('dashboard.index')->with('message', 'Profile Updated.');
 	}
 
 
@@ -153,11 +199,12 @@ class AdvisorController extends \BaseController {
 	public function resetPassword()
 	{
 		$advisor = Advisor::where('email', Input::get('email'))->first();
-		$advisorName = $advisor->first_name. ' '.$advisor->last_name;
 
 		if ($advisor == null) {
 			return Redirect::home()->with('message', 'There was no account associated with the email you provided.');
 		}
+
+		$advisorName = $advisor->first_name. ' '.$advisor->last_name;
 
 		$newPassword = str_random(8);
 
@@ -177,6 +224,19 @@ class AdvisorController extends \BaseController {
 	public function requestNewPassword()
 	{
 		return View::make('user.reset-password');
+	}
+
+	public function imageTest()
+	{
+		if (Input::file('image')->isValid())
+		{
+			Image::make(Input::file('image'))
+				// resize the image to a width of 300 and constrain aspect ratio (auto height)
+				->resize(300, null, function ($constraint) {
+				    $constraint->aspectRatio();
+				})
+				->save('img/profile/'.Input::get('name').'.jpg');
+		}
 	}
 
 

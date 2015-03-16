@@ -21,12 +21,12 @@
 					@endforeach
 				</div>
 				<div class="col-xs-3 add-avail">
-					{{ link_to_route('user.availabilities.create', 'Add an Availability', null, ['class' => 'btn btn-info']) }}
+					{{ link_to_route('user.availabilities.create', 'Schedule Office Hours Now', null, ['class' => 'btn btn-info']) }}
 				</div>
 			</div>
 		</div>
 		<div class="row">
-			@foreach ($currentUser->availabilities()->get()->sortBy(function($avail) {
+			@foreach ($currentUser->availabilities()->where('expired', 0)->get()->sortBy(function($avail) {
 				return $avail->days()->first()['date'];
 			}) as $availability)
 			<div class="col-sm-3 availability-dashboard-listing">
@@ -92,6 +92,7 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-6">
+				<img src="{{ $currentUser->profile_img }}" class="img-responsive">
 				<h3>{{ $currentUser->first_name }} {{ $currentUser->last_name }}</h3>
 			</div>
 			<div class="col-xs-6">

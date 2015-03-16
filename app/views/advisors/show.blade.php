@@ -1,12 +1,14 @@
-@extends('layouts.full-width')
+@extends('layouts.full-width-cxp')
 
 @section('content')
 <div class="container">
 	<div class="row">
 		<div class="heading-text col-sm-12">
-			<a href="http://walnutstlabs.com"><img src="/img/wsllogo.jpg" class="img-responsive"></a>
-			<h2 style="display: inline-block;">Advance Your Idea. Faster.</h2>
-			<h4>Walnut St. Labs Office Hours is a joint project between Walnut St. Labs and the Chester County Economic Development Council that offers innovators the opportunity to gain expert advice from industry and domain experts from Chester County and Southeastern PA.</h4>
+			<a href="http://walnutstlabs.com"><img src="/img/wsllogo.jpg" ></a>
+			<a href="http://www.i2npa.org/"><img src="/img/i2n.png" ></a>
+			<br />
+			<h2>Advance Your Idea. Faster.</h2>
+			<h4>Office Hours is a joint project between <span id="wsl-tag"><a href="http://walnutstlabs.com">Walnut St. Labs</a></span> and the <span id="i2n-tag"><a href="http://www.i2npa.org/">Ideas x Innovation Network</a></span> that offers innovators the opportunity to gain expert advice from industry and domain experts from Chester County and Southeastern PA.</h4>
 		</div>
 	</div>
 	<div class="row col-sm-12 expertise-group-listing">
@@ -27,16 +29,24 @@
 		@endif
 		<div class="row col-sm-8 col-sm-offset-2 advisor-listing">
 			<div class="row advisor-header">
-{{ link_to_route('advisors.show', $advisor->first_name.' '.$advisor->last_name, [$advisor->id, $advisor->first_name, $advisor->last_name]) }}				@foreach ($advisor->expertise()->get() as $exp)
-					<button class="btn">{{$exp->title}}</button>
-				@endforeach
+			@if($advisor->profile_img)
+				<img src="{{ $advisor->profile_img }}" class="img-responsive">
+			@endif
+			@if($advisor->linkedin)
+				<a href="{{ $advisor->linkedin }}" target="_blank"><i class="fa fa-linkedin-square"></i></a>
+			@endif
+			{{ link_to_route('advisors.show', $advisor->first_name.' '.$advisor->last_name, [$advisor->id, $advisor->first_name, $advisor->last_name], ['class' => 'advisor-name']) }}
+			<br />
+			@foreach ($advisor->expertise()->get() as $exp)
+				<button class="btn">{{$exp->title}}</button>
+			@endforeach
 				<p>{{nl2br($advisor->bio)}}</p>
 			</div>
 			@if ($advisor->availabilities()->first())
 			<div class="row advisor-availability-listings">
 				<h4 class="the-word-availabilities">Availabilities:</h4>
 				<div class="row container-fix-avail">
-				@foreach ($advisor->availabilities()->where('is_booked', '!==', '1')->get()->sortBy(function($availZ) {
+				@foreach ($advisor->availabilities()->where('is_booked', '!==', '1')->where('expired', 0)->get()->sortBy(function($availZ) {
 					return $availZ->days()->first()['date'];
 				}) as $avail)
 				<a href="#" id="{{$avail->id}}" class="advisor-avail-single-a">

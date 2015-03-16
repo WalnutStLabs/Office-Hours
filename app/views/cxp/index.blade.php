@@ -1,10 +1,10 @@
-@extends('layouts.full-width')
+@extends('layouts.full-width-cxp')
 
 @section('content')
 <div class="container">
 	<div class="row">
 		<div class="heading-text col-sm-12">
-			<a href="http://walnutstlabs.com"><img src="/img/wsllogo.jpg" ></a>
+			<a href="http://walnutstlabs.com"><img src="/img/wsllogo.png" ></a>
 			<a href="http://www.i2npa.org/"><img src="/img/i2n.png" ></a>
 			<br />
 			<h2>Advance Your Idea. Faster.</h2>
@@ -13,11 +13,11 @@
 	</div>
 	<div class="row col-sm-12 expertise-group-listing">
 		<a href="#" id="all">
-			<h3 class="btn btn-info">All</h3>
+			<h3 class="exp-group btn btn-info">All</h3>
 		</a>
 		@foreach ($expertiseGroups as $expG)
 			<a href="#" id="{{ $expG->id }}">
-				<h3 class="btn btn-info">{{ $expG->name }}</h3>
+				<h3 class="exp-group btn btn-info">{{ $expG->name }}</h3>
 			</a>
 		@endforeach
 	</div>
@@ -36,6 +36,12 @@
 
 <script>
 $(document).ready(function() {
+	$('.exp-group').click(function() {
+		$('html,body').animate({
+	          scrollTop: $('.exp-group').offset().top
+	        }, 1000);
+	});
+
 	$('#i2n-tag').qtip({
 		content: 'i2n is an initiative of the Chester County Economic Development Council and is funded in part by private sector support, educational partners and the Pennsylvania Department of Community & Economic Development’s Discovered in PA, Developed in PA program.',
 		show: 'mouseover',
@@ -59,8 +65,10 @@ $(document).ready(function() {
 	// Pull advisors based off of expertise expertise group
 	// Expertise Group -> Expertises -> Advisors
 	var expertiseGroupId;
-	$('.expertise-group-listing a').click(function() {
+	$('.expertise-group-listing a').click(function(e) {
+		$('body').css('min-height', '150vh');
 		console.log('WOAa');
+		e.preventDefault();
 		$('#advisor-container').fadeOut(200, function() { $('#advisor-container').empty(); });
 		expertiseGroupId = $(this).attr('id');
 		$.ajax({

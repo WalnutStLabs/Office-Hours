@@ -33,7 +33,7 @@
       @yield('content')
 
       <hr>
-      @include('layouts.partials.footer')
+      @include('layouts.partials.footer-admin')
       </div>
 
       @include('layouts.partials.common-scripts')

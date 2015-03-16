@@ -20,21 +20,29 @@
 
         </script>
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-        {{ HTML::style('css/custom.css'); }}
+        <link href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.1/jquery.qtip.min.css" rel="stylesheet">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+        {{ HTML::style('css/sweetAlert.css') }}
+        {{ HTML::style('css/custom.css') }}
     </head>
-    <body>
+    <body class="clouds">
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-      @include('layouts.partials.nav.default')
-
-      <div class="container">
+      @if(Auth::user())
+        @if($currentUser->id == 100)
+          @include('layouts.partials.nav.default')
+        @endif
+      @endif
+      <!-- <div class="container"> -->
+      @include('layouts.partials.nav.advisor-dash')
 
       @yield('content')
 
-      <hr>
-      @include('layouts.partials.footer')
+      <div class="container">
+        @include('layouts.partials.footer')
       </div>
+      <!-- </div> -->
 
       @include('layouts.partials.common-scripts')
 
@@ -44,3 +52,4 @@
       </script>
     </body>
 </html>
+
