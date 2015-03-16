@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"require": {
 		"laravel/framework": "4.2.*",
-		"appitventures/phpgmaps": "dev-master",
+		"appitventures/phpgmaps": "1.0.*@dev",
 		"guzzlehttp/guzzle": "~4.0",
 		"bogardo/mailgun": "3.0.*"
 	},
