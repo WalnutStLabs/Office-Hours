@@ -81,13 +81,13 @@ class meetingReminderEmailCommand extends Command {
 
 	    	\Mail::queue('emails.reminder.advisor', $data, function($message) use ($advisorEmail, $advisorName) {
 	    		$message->to($advisorEmail, $advisorName)
-	    			->subject('Reminder: Your Office Hours meeting is tomorrow.');
+	    			->subject('Reminder: Your Office Hours meeting is soon.');
 	    	});
 	    	$this->info($advisorEmail.' emailed.');
 
 	    	\Mail::queue('emails.reminder.requestee', $data, function($message) use ($requestee) {
 	    		$message->to($requestee->email, $requestee->name)
-	    			->subject('Reminder: Your Office Hours meeting is tomorrow.');
+	    			->subject('Reminder: Your Office Hours meeting is soon.');
 	    	});
 	    	$this->info($requestee->email.' emailed.');
 	    	$avail->reminder_sent = true;

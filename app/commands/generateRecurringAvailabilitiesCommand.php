@@ -96,7 +96,14 @@ class generateRecurringAvailabilitiesCommand extends Command {
 			$recurringAvailabilitiesInNextTwoWeeks = [];
 
 			foreach ($advisor->recurringAvailabilities()->get() as $recurAvail) {
+				$this->info($today->date);
+				$this->info(Carbon::parse($today->date)->dayOfWeek);
+				$this->info($recurAvail->day_of_week);
 				$difference = $recurAvail->day_of_week - Carbon::parse($today->date)->dayOfWeek;
+
+if($advisor->id == 20) {
+var_dump($availabilitiesInNextTwoWeeks);
+}
 
 				$this->info($difference);
 
@@ -105,15 +112,17 @@ class generateRecurringAvailabilitiesCommand extends Command {
 				$timeOfRecurAvail = $recurAvail->time;
 
 				if ($this->in_array_r([$dayOfWeekOfRecurAvail->date, $recurAvail->time], $availabilitiesInNextTwoWeeks)) {
-					echo 'intersection of RecurAvail ID '.$recurAvail->id.' at date '.$dayOfWeekOfRecurAvail->date."\n";
+					echo 'intersection of RecurAvail ID '.$recurAvail->id.' at date '.$dayOfWeekOfRecurAvail->date."Advisor ID: ".$advisor->id."\n";
 				} else {
 					// Create it for this Week
 					if ($difference > 0) {
+						$this->info('Creating avail this week for user ID '.$advisor->id."\n");
 						Availability::createRecurringAvailability($timeOfRecurAvail, $dayOfWeekOfRecurAvail->id, $advisor->id, Service::where('name', '25 Minute Free Consultation')->first()->id, $recurAvail->location_id);
 					}
 
 					if (!$this->in_array_r([$nextWeeksDay->date, $recurAvail->time], $availabilitiesInNextTwoWeeks)) {
 						// Create it for next week
+						$this->info('Creating avail next week for user ID '.$advisor->id."\n");
 						Availability::createRecurringAvailability($timeOfRecurAvail, ((int) $dayOfWeekOfRecurAvail->id + 7), $advisor->id, Service::where('name', '25 Minute Free Consultation')->first()->id, $recurAvail->location_id);
 					}
 				}
